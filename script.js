@@ -14,7 +14,6 @@ const STORAGE_KEYS = {
     THEME: 'membership_theme'
 };
 
-// Initialization
 document.addEventListener('DOMContentLoaded', function() {
     loadTheme();
     loadStudentsFromStorage();
@@ -41,13 +40,12 @@ function initializeEventListeners() {
     });
 }
 
-// Navigation Functions
 function showSection(sectionName) {
-    // Hide all sections
+
     const sections = document.querySelectorAll('.section');
     sections.forEach(section => section.classList.remove('active'));
     
-    // Remove active class from all nav links
+
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => link.classList.remove('active'));
 
@@ -56,7 +54,7 @@ function showSection(sectionName) {
         targetSection.classList.add('active');
     }
     
-    // Add active class to clicked nav link
+
     const targetLink = document.querySelector(`[onclick="showSection('${sectionName}')"]`);
     if (targetLink) {
         targetLink.classList.add('active');
@@ -64,17 +62,16 @@ function showSection(sectionName) {
     
     currentSection = sectionName;
     
-    // Update display for data-dependent sections
+
     if (['home', 'statistics', 'members'].includes(sectionName)) {
         updateDisplay();
     }
     
-    // Update pie chart for statistics section
+
     if (sectionName === 'statistics') {
         setTimeout(() => updatePieChart(), 100);
     }
-    
-    // Close sidebar on mobile after navigation
+
     if (window.innerWidth <= 768) {
         closeSidebar();
     }
@@ -158,7 +155,7 @@ function loadStudentsFromStorage() {
     }
 }
 
-// Control Number Generation
+// Control Number GeneratOR
 function generateControlNumber() {
     const now = new Date();
     const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -332,23 +329,22 @@ function updatePieChart() {
     const yearCounts = stats.yearCounts;
     const total = stats.totalMembers;
     
-    // Update legend
+  
     document.getElementById('legend1stYear').textContent = yearCounts['1st Year'];
     document.getElementById('legend2ndYear').textContent = yearCounts['2nd Year'];
     document.getElementById('legend3rdYear').textContent = yearCounts['3rd Year'];
     document.getElementById('legend4thYear').textContent = yearCounts['4th Year'];
-    
-    // Clear canvas
+
     pieChart.ctx.clearRect(0, 0, pieChart.canvas.width, pieChart.canvas.height);
     
     if (total === 0) {
-        // Draw empty state
+
         pieChart.ctx.fillStyle = '#e0e0e0';
         pieChart.ctx.beginPath();
         pieChart.ctx.arc(pieChart.centerX, pieChart.centerY, pieChart.radius, 0, 2 * Math.PI);
         pieChart.ctx.fill();
         
-        // Add "No Data Available" text
+      
         pieChart.ctx.fillStyle = '#666';
         pieChart.ctx.font = '16px Arial';
         pieChart.ctx.textAlign = 'center';
@@ -356,8 +352,8 @@ function updatePieChart() {
         return;
     }
     
-    // Calculate angles for each slice
-    let currentAngle = -Math.PI / 2; // Start from top
+
+    let currentAngle = -Math.PI / 2; 
     const angles = {};
     
     Object.keys(yearCounts).forEach(year => {
@@ -375,12 +371,12 @@ function updatePieChart() {
         }
     });
     
-    // Draw pie slices
+
     Object.keys(angles).forEach(year => {
         const angle = angles[year];
         const color = pieChart.colors[year];
         
-        // Draw slice
+
         pieChart.ctx.fillStyle = color;
         pieChart.ctx.beginPath();
         pieChart.ctx.moveTo(pieChart.centerX, pieChart.centerY);
@@ -388,13 +384,13 @@ function updatePieChart() {
         pieChart.ctx.closePath();
         pieChart.ctx.fill();
         
-        // Draw border
+     
         pieChart.ctx.strokeStyle = '#ffffff';
         pieChart.ctx.lineWidth = 2;
         pieChart.ctx.stroke();
         
-        // Add percentage label if slice is large enough
-        if (angle.percentage > 0.05) { // Only show label if slice is large enough
+     
+        if (angle.percentage > 0.05) { 
             const labelAngle = angle.start + (angle.end - angle.start) / 2;
             const labelX = pieChart.centerX + Math.cos(labelAngle) * (pieChart.radius * 0.7);
             const labelY = pieChart.centerY + Math.sin(labelAngle) * (pieChart.radius * 0.7);
@@ -404,7 +400,7 @@ function updatePieChart() {
             pieChart.ctx.textAlign = 'center';
             pieChart.ctx.textBaseline = 'middle';
             
-            // Add shadow for better readability
+         
             pieChart.ctx.shadowColor = 'rgba(0,0,0,0.5)';
             pieChart.ctx.shadowBlur = 2;
             pieChart.ctx.shadowOffsetX = 1;
@@ -413,7 +409,7 @@ function updatePieChart() {
             const percentage = Math.round(angle.percentage * 100);
             pieChart.ctx.fillText(`${percentage}%`, labelX, labelY);
             
-            // Reset shadow
+  
             pieChart.ctx.shadowColor = 'transparent';
             pieChart.ctx.shadowBlur = 0;
             pieChart.ctx.shadowOffsetX = 0;
@@ -422,7 +418,7 @@ function updatePieChart() {
     });
 }
 
-// Display Update Functions
+
 function updateDisplay() {
     const filteredStudents = getFilteredStudents();
     updateTable(filteredStudents);
@@ -460,7 +456,7 @@ function updateTable(filteredStudents = students) {
     const tbody = document.getElementById('membersTableBody');
     if (!tbody) return;
     
-    // Update filtered count
+   
     const filteredCountElement = document.getElementById('filteredCount');
     if (filteredCountElement) {
         filteredCountElement.textContent = filteredStudents.length;
@@ -498,7 +494,7 @@ function updateTable(filteredStudents = students) {
     });
 }
 
-// Student Edit Functions
+
 function editStudent(id) {
     const student = students.find(s => s.id == id);
     if (!student) {
@@ -623,7 +619,8 @@ function deleteAllMembers() {
     }
 }
 
-// CSV Helper Functions
+
+
 function escapeCSVField(field) {
     if (field == null || field === undefined) {
         return '';
@@ -631,7 +628,6 @@ function escapeCSVField(field) {
     
     const fieldStr = String(field);
     
-    // If field contains comma, double quote, or newline, wrap in quotes and escape quotes
     if (fieldStr.includes(',') || fieldStr.includes('"') || fieldStr.includes('\n') || fieldStr.includes('\r')) {
         return '"' + fieldStr.replace(/"/g, '""') + '"';
     }
@@ -650,16 +646,16 @@ function parseCSVLine(line) {
         
         if (char === '"') {
             if (inQuotes && i + 1 < line.length && line[i + 1] === '"') {
-                // Double quote - escaped quote
+             
                 current += '"';
                 i += 2;
             } else {
-                // Toggle quote state
+                
                 inQuotes = !inQuotes;
                 i++;
             }
         } else if (char === ',' && !inQuotes) {
-            // Field separator
+        
             result.push(current.trim());
             current = '';
             i++;
@@ -669,7 +665,7 @@ function parseCSVLine(line) {
         }
     }
     
-    // Add final field
+
     result.push(current.trim());
     
     return result;
@@ -696,7 +692,7 @@ function parseCSV(csvText) {
     return data;
 }
 
-// CSV File Operations
+
 function saveDataFile() {
     const filteredStudents = getFilteredStudents();
     
@@ -706,10 +702,10 @@ function saveDataFile() {
     }
     
     try {
-        // CSV Headers
+       
         const headers = ['Control Number', 'Name', 'Student Number', 'Year Level', 'Fee', 'Date'];
         
-        // Convert students data to CSV format
+        
         const csvRows = [headers.join(',')];
         
         filteredStudents.forEach(student => {
@@ -738,10 +734,10 @@ function saveDataFile() {
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
         
-        showAlert(`CSV file saved successfully! ${filteredStudents.length} records exported.`, 'success');
+        showAlert(`file saved successfully! ${filteredStudents.length} records exported.`, 'success');
     } catch (error) {
-        console.error('Save CSV file error:', error);
-        showAlert('Failed to save CSV file. Please try again.', 'error');
+        console.error('Save  file error:', error);
+        showAlert('Failed to save file. Please try again.', 'error');
     }
 }
 
@@ -754,7 +750,7 @@ function handleFileLoad(event) {
     if (!file) return;
     
     if (file.type !== 'text/csv' && !file.name.toLowerCase().endsWith('.csv')) {
-        showAlert('Please select a valid CSV file!', 'error');
+        showAlert('Please select a valid  file!', 'error');
         return;
     }
     
@@ -765,22 +761,22 @@ function handleFileLoad(event) {
             const csvData = parseCSV(csvText);
             
             if (csvData.length === 0) {
-                showAlert('The CSV file appears to be empty or invalid!', 'error');
+                showAlert('The file appears to be empty or invalid!', 'error');
                 return;
             }
             
-            // Validate required columns
+            // required columns
             const requiredColumns = ['Control Number', 'Name', 'Student Number', 'Year Level', 'Fee', 'Date'];
             const firstRow = csvData[0];
             const missingColumns = requiredColumns.filter(col => !(col in firstRow));
             
             if (missingColumns.length > 0) {
-                showAlert(`CSV file is missing required columns: ${missingColumns.join(', ')}`, 'error');
+                showAlert(` file is missing required columns: ${missingColumns.join(', ')}`, 'error');
                 return;
             }
             
-            if (confirm(`This will replace all current data with ${csvData.length} records from the CSV file. Continue?`)) {
-                // Convert CSV data to student objects
+            if (confirm(`This will replace all current data with ${csvData.length} would you like to Continue?`)) {
+             
                 const newStudents = csvData.map((row, index) => ({
                     id: Date.now() + index,
                     name: row['Name'] || '',
@@ -789,9 +785,7 @@ function handleFileLoad(event) {
                     membershipFee: parseFloat(row['Fee']) || 0,
                     controlNumber: row['Control Number'] || '',
                     registrationDate: row['Date'] || ''
-                })).filter(student => student.name && student.studentNumber); // Filter out empty rows
-                
-                // Check for duplicate student numbers
+                })).filter(student => student.name && student.studentNumber); 
                 const studentNumbers = new Set();
                 const duplicates = [];
                 newStudents.forEach(student => {
@@ -813,7 +807,7 @@ function handleFileLoad(event) {
                 saveToLocalStorage();
                 updateDisplay();
                 updatePieChart();
-                showAlert(`Successfully loaded ${newStudents.length} students from CSV file!`, 'success');
+                showAlert(`Successfully loaded ${newStudents.length} students file`, 'success');
             }
         } catch (error) {
             console.error('CSV load error:', error);
@@ -894,4 +888,4 @@ window.addEventListener('resize', function() {
     }
 });
 
-console.log('Student Membership System with CSV support loaded successfully!');
+console.log('Uploaded Succesfully!');
